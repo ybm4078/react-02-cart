@@ -13,20 +13,22 @@ function App() {
         setName("");
     };
 
-    const handlePlusButton = (index) => {
+    const handleUpdateQuantity = (index, number) => {
+        // 기능을 합쳐서 핸들러를 만드는데,
+        // '1을 더하고', '1을 빼고' 하는 기능이 아니라, "수량을 변경하는 함수"로 만듦
+        // 얼마를 바꾸느냐는 이 함수를 실행하는 곳에서 결정(매개변수 전달)
         const newCart = [...cart];
-        newCart[index].quantity += 1;
-        setCart(newCart);
-    }
-    const handleMinusButton = (item, index) => {
-        // 지금 현재 수량이 1이하면, 실행하지 않게끔
-        if (item.quantity <= 1){
+        // newCart[index].quantity -= 1;
+        const nextQuantity = newCart[index].quantity + number;
+        // 그렇게 -3 해달라는 명령을 처리했을 때 nextQuantity 마이너스 값이면 하면 안됨
+        // 이 조건은 nextQuantity 계산을 한 뒤에 if 처리를 해줘야 함.
+        if (nextQuantity < 1) {
             return;
         }
-        const newCart = [...cart];
-        newCart[index].quantity -= 1;
+        newCart[index].quantity = nextQuantity;
         setCart(newCart);
     }
+
     const handleDeleteButton = (index) => {
         const result = cart.filter((v, i) => {return i !== index});
         setCart(result);
@@ -69,9 +71,11 @@ function App() {
                 <tr key={index}>
                     <td>{item.name}</td>
                     <td>
-                        <button onClick={() => handleMinusButton(item,index)}>-</button>
+                        <button onClick={() => handleUpdateQuantity(index, -10)}>-10</button>
+                        <button onClick={() => handleUpdateQuantity(index, -1)}>-</button>
                         {item.quantity}
-                        <button onClick={() => handlePlusButton(index)}>+</button>
+                        <button onClick={() => handleUpdateQuantity(index, +1)}>+</button>
+                        <button onClick={() => handleUpdateQuantity(index, +10)}>+10</button>
                     </td>
                     <td>
                         <button onClick={() => handleDeleteButton(index)}>삭제</button>
