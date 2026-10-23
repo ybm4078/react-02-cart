@@ -4,22 +4,45 @@ function App() {
     const [name, setName] = useState("");
     const [cart, setCart] = useState([]);
 
-    // cart는 목록입니다. 요소의 형태를 생각해보면,
-    // 이 요소는 이름을 가져야되고, 수량도 가져야 됨  => 여러개의 값을 가지는 타입은 객체 뿐
+    const handleSubmit =(e) => {
+        e.preventDefault();
+        if (name === "" || name === " ") {
+            return;
+        }
+        setCart([...cart,{name: name,quantity:1}]);
+        setName("");
+    };
+
+    const handlePlusButton = (index) => {
+        const newCart = [...cart];
+        newCart[index].quantity += 1;
+        setCart(newCart);
+    }
+    const handleMinusButton = (item, index) => {
+        // 지금 현재 수량이 1이하면, 실행하지 않게끔
+        if (item.quantity <= 1){
+            return;
+        }
+        const newCart = [...cart];
+        newCart[index].quantity -= 1;
+        setCart(newCart);
+    }
+    const handleDeleteButton = (index) => {
+        const result = cart.filter((v, i) => {return i !== index});
+        setCart(result);
+    }
+
+    // totalQuantity라는 일반 변수는 값을 저장할 때 'state'를 이용하고 있는 중임
+    // react는 state의 값이 변하는지를 감시하고 있기 때문에
+    // 값이 변하여 재계산을 하는 'react에서의 리렌더링 => 재계산을 하여 브라우저에 코드를 제공하는 일' 이라는 과정에 포함됨
+    const totalQuantity = cart.reduce((sum, item) => {return item.quantity + sum}, 0)
+
     return (
         <>
             <h2>Simple Shop</h2>
             <fieldset>
                 <legend>상품추가</legend>
-                <form onSubmit={(e) => {
-                    e.preventDefault();
-                    if (name === "" || name === " ") {
-                        return;
-                    }
-                    // name 값을 cart에다가 추가
-                    setCart([...cart,{name: name,quantity:1}]);
-                    setName("");
-                }}>
+                <form onSubmit={handleSubmit}>
                     <input
                         placeholder={"상품명을 입력하세요"}
                         value={name}
@@ -31,9 +54,6 @@ function App() {
             <table border={1}
                    cellPadding={10}
                     style={{
-                    // reach에서 style 속성은 객체로 전달해줄 수 있으며,
-                    // key: value 형태로 프로퍼티를 기록하는데
-                    // key에는 camlCase로 작성해주어야 함
                     width: "100%",
                     borderCollapse: "collapse",
             }}>
@@ -49,39 +69,17 @@ function App() {
                 <tr key={index}>
                     <td>{item.name}</td>
                     <td>
-                        <button onClick={() => {
-                            // 지금 현재 수량이 1이하면, 실행하지 않게끔
-                            if (item.quantity <= 1){
-                                return;
-                            }
-                            const newCart = [...cart];
-                            newCart[index].quantity -= 1;
-                            setCart(newCart);
-                        }}>-</button>
+                        <button onClick={() => handleMinusButton(item,index)}>-</button>
                         {item.quantity}
-                        <button onClick={() => {
-                            // cart의 정보 중, index 자리에 있는 요소의 quantity값을 + 1
-                            // cart[index].quantity += 1;  => 이렇게 쓰면 안됨
-                            //                              => state의 값을 바꿀떈 set을 쓰라고 했음
-
-                            // 1. react가 알아채개끔 하여면, 새 배열을 cart에 넣어야함 => 새 배열을 만들고
-                            // 2. 값을 바꾸고
-                            // 3. 그렇게 만들어진 배열을 setCart에 넣게 단계별로 진행하는 게 이해하기 쉽고 편함
-                            const newCart = [...cart];
-                            newCart[index].quantity += 1;
-                            setCart(newCart);
-                        }}>+</button>
+                        <button onClick={() => handlePlusButton(index)}>+</button>
                     </td>
                     <td>
-                        <button onClick={() => {
-                            const result = cart.filter((v, i) => {return i !== index});
-                            setCart(result);
-                        }}>삭제</button>
+                        <button onClick={() => handleDeleteButton(index)}>삭제</button>
                     </td>
                 </tr>)}
                 </tbody>
             </table>
-            <h3>총 품목 : {cart.length}개 / 총 수량: {cart.reduce((sum, item) => {return item.quantity + sum}, 0)}개</h3>
+            <h3>총 품목 : {cart.length}개 / 총 수량: {totalQuantity}개</h3>
         </>
     );
 }
