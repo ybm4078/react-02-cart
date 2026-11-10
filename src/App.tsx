@@ -1,20 +1,27 @@
-import {useState} from "react";
+import { type SubmitEvent, type ChangeEvent, useState } from "react";
 import styles from "./App.module.css";
 
-function App() {
-    const [name, setName] = useState("");
-    const [cart, setCart] = useState([]);
+type Product = {
+    name: string;
+    quantity: number;
+}
 
-    const handleSubmit =(e) => {
+function App() {
+    const [name, setName] = useState<string>("");
+    const [cart, setCart] = useState<Product[]>([]);
+
+    const handleSubmit = (e: SubmitEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (name === "" || name === " ") {
             return;
         }
-        setCart([...cart,{name: name,quantity:1}]);
+        setCart([...cart, { name: name, quantity: 1 }]);
         setName("");
     };
 
-    const handleUpdateQuantity = (index, number) => {
+    const handleChange = (e: ChangeEvent<HTMLInputElement, HTMLInputElement>) => setName(e.target.value);
+
+    const handleUpdateQuantity = (index:number, number:number) => {
         const newCart = [...cart];
         const nextQuantity = newCart[index].quantity + number;
         if (nextQuantity < 1) {
@@ -24,8 +31,8 @@ function App() {
         setCart(newCart);
     }
 
-    const handleDeleteButton = (index) => {
-        const result = cart.filter((v, i) => {return i !== index});
+    const handleDeleteButton = (index: number) => {
+        const result = cart.filter((_, i) => {return i !== index});
         setCart(result);
     }
 
@@ -42,7 +49,7 @@ function App() {
                         className={styles.input}
                         placeholder={"상품명을 입력하세요"}
                         value={name}
-                        onChange={e => setName(e.target.value)}
+                        onChange={handleChange}
                     />
                     <button className={styles.submitButton} type={"submit"}>
                         카트에 담기
@@ -74,7 +81,7 @@ function App() {
                                             onClick={() => handleUpdateQuantity(index, -1)}>
                                             -
                                         </button>
-                                        <spen className={styles.quantityText}>{item.quantity}</spen>
+                                        <span className={styles.quantityText}>{item.quantity}</span>
                                         <button
                                             className={styles.qtyButton}
                                             onClick={() => handleUpdateQuantity(index, +1)}>

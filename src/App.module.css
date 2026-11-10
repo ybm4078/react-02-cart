@@ -1,6 +1,6 @@
 .container {
     width: 100%;
-    max-width: 600px;
+    max-width: 1000px;
     margin: 50px auto;
     padding: 30px;
     background: white;
@@ -75,7 +75,7 @@
 .table {
     width: 100%;
     border-collapse: collapse;
-    text-align: left;
+    text-align: center;
     font-size: 0.95rem;
 }
 
@@ -96,10 +96,14 @@
 .table tbody tr:hover {
     background-color: #f9fafb;
 }
+.table thead tr {
+    align-self: center;
+}
 
 .quantityGroup {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
 }
 
@@ -126,6 +130,7 @@
     background-color: #fee2e2;
     color: #dc2626;
     border: 6px;
+    border-radius: 6px;
     cursor: pointer;
     font-weight: 600;
     transition: background-color 0.2s;
